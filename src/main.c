@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include "tree.h"
+#include "stdio.h"
 
 int main(int argc, char * argv[]) {
     FILE *f = NULL;
@@ -14,8 +15,16 @@ int main(int argc, char * argv[]) {
         }
     }
 
-    printf("File has been read!");
+    printf("File has been read! Enter your query, if you using stdin.\n");
 
+    Node *tree = parseQuery(f);
+    if (tree == NULL) {
+        printf("tree is NULL, fault!!! \n");
+    } else {
+        printTree(tree, 0);
+    }
+
+    freeNode(tree);
     fclose(f);
     return 0;
 }

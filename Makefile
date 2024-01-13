@@ -15,7 +15,8 @@ MAIN_OBJ = main
 INC += -I$(INCDIR)
 
 COMPILE = $(CC) $(INC) -c $< -o $@
-BISON = bison -o $@ --header=$(INCDIR)/$(basename $(notdir $@)).h $< # не нашел способа адекватнее в мейке разделить на две директории
+# не нашел способа адекватнее в мейке разделить на две директории
+BISON = bison -o $@ --header=$(INCDIR)/$(basename $(notdir $@)).h $<
 FLEX = flex -o $@ -i $<
 LINK=$(CC) -o $@
 
@@ -36,3 +37,6 @@ $(MAIN_OBJ): $(FLEXFILES) $(BISONFILES) $(OBJECTS)
 clean:
 	rm -rf $(BUILDDIR)/*
 	rm -f $(MAIN_OBJ)
+	rm -f src/bison.c
+	rm -f src/lex.c
+	rm -f include/bison.h
