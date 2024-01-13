@@ -1,13 +1,14 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 extern int yylineno;  /* Для отладки */
 
 enum nodeType {
     NTOKEN_INT = 0,
-    NTOKEN_PLUS,
-    NTOKEN_MINUS,
-    NTOKEN_MULTIPLY
-};  /* Типы "входных данных" */
+    NTOKEN_FLOAT,
+    NTOKEN_BOOL,
+    NTOKEN_STRING
+};  /* Типы значений */
 
 struct Node {
     enum nodeType type;
@@ -16,17 +17,14 @@ struct Node {
             int value;
         } INT;
         struct {
-            struct Node* left;
-            struct Node* right;
-        } PLUS;
+            float value;
+        } FLOAT;
         struct {
-            struct Node* left;
-            struct Node* right;
-        } MINUS;
+            bool value;
+        } BOOL;
         struct {
-            struct Node* left;
-            struct Node* right;
-        } MULTIPLY;
+            char * value;
+        } STRING;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 

@@ -19,22 +19,16 @@ void printTree(Node *tree, int indentCount) {
     }
     switch (tree->type) {
         case NTOKEN_INT:
-            printf("NUM(%d)\n", tree->data.INT.value);
+            printf("INT(%d)\n", tree->data.INT.value);
             break;
-        case NTOKEN_PLUS:
-            printf("PLUS:\n");
-            printTree(tree->data.PLUS.left, indentCount + 1);
-            printTree(tree->data.PLUS.right, indentCount + 1);
+        case NTOKEN_FLOAT:
+            printf("FLOAT(%.2f)\n", tree->data.FLOAT.value);
             break;
-        case NTOKEN_MINUS:
-            printf("MINUS:\n");
-            printTree(tree->data.MINUS.left, indentCount + 1);
-            printTree(tree->data.MINUS.right, indentCount + 1);
+        case NTOKEN_STRING:
+            printf("STRING(%s)\n", tree->data.STRING.value);
             break;
-        case NTOKEN_MULTIPLY:
-            printf("MULTIPLY:\n");
-            printTree(tree->data.MULTIPLY.left, indentCount + 1);
-            printTree(tree->data.MULTIPLY.right, indentCount + 1);
+        case NTOKEN_BOOL:
+            printf("BOOL(%d)\n", tree->data.BOOL.value);
             break;
     }
 }
@@ -46,22 +40,6 @@ void yyerror() {
 void freeNode(Node *node) {
     if (node == NULL) {
         return;
-    }
-    switch (node->type) {
-        case NTOKEN_INT:
-            break;
-        case NTOKEN_PLUS:
-            freeNode(node->data.PLUS.right);
-            freeNode(node->data.PLUS.left);
-            break;
-        case NTOKEN_MINUS:
-            freeNode(node->data.MINUS.right);
-            freeNode(node->data.MINUS.left);
-            break;
-        case NTOKEN_MULTIPLY:
-            freeNode(node->data.MULTIPLY.right);
-            freeNode(node->data.MULTIPLY.left);
-            break;
     }
     free(node);
 }

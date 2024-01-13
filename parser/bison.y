@@ -1,5 +1,6 @@
 %{
     #include <stdio.h>
+    #include <stdbool.h>
     #include "tree.h"
     extern int yylex();
 %}
@@ -7,12 +8,17 @@
 %parse-param {Node **tree}
 
 %union {
-    Node *node;
-	int ivalue;
+    Node * node;
+	int intValue;
+    float floatValue;
+    bool boolValue;
+    char * stringValue;
 }
 
-%token<ivalue> TOKEN_NUM
-%token TOKEN_PLUS TOKEN_MINUS TOKEN_MULTIPLY
+%token<intValue> TOKEN_INT
+%token<floatValue> TOKEN_FLOAT
+%token<boolValue> TOKEN_BOOL
+%token<stringValue> TOKEN_STRING
 %type<node> exp
 %start exps
 
@@ -22,31 +28,28 @@ exps: | exps exp {
     *tree = $2;
 };
 
-exp: TOKEN_NUM {
+exp: TOKEN_INT {
     Node *node = createNode();
     node->type = NTOKEN_INT;
     node->data.INT.value = $1;
     $$ = node;
 } |
-exp TOKEN_PLUS exp {
+TOKEN_FLOAT {
     Node *node = createNode();
-    node->type = NTOKEN_PLUS;
-    node->data.PLUS.left = $1;
-    node->data.PLUS.right = $3;
+    node->type = NTOKEN_FLOAT;
+    node->data.FLOAT.value = $1;
     $$ = node;
 } |
-exp TOKEN_MINUS exp	{
+TOKEN_BOOL {
     Node *node = createNode();
-    node->type = NTOKEN_MINUS;
-    node->data.MINUS.left = $1;
-    node->data.MINUS.right = $3;
+    node->type = NTOKEN_BOOL;
+    node->data.BOOL.value = $1;
     $$ = node;
 } |
-exp TOKEN_MULTIPLY exp {
+TOKEN_STRING {
     Node *node = createNode();
-    node->type = NTOKEN_MULTIPLY;
-    node->data.MULTIPLY.left = $1;
-    node->data.MULTIPLY.right = $3;
+    node->type = NTOKEN_STRING;
+    node->data.STRING.value = $1;
     $$ = node;
 };
 
