@@ -35,8 +35,8 @@ $(MAIN_OBJ): $(FLEXFILES) $(BISONFILES) $(OBJECTS)
 	$(LINK) $(OBJECTS)
 
 clean:
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)/*.o
 	rm -f $(MAIN_OBJ)
-	rm -f src/bison.c
-	rm -f src/lex.c
-	rm -f include/bison.h
+	rm -f $(SRCDIR)/bison.c
+	rm -f $(SRCDIR)/lex.c
+	rm -f $(INCDIR)/bison.h
