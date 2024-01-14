@@ -13,22 +13,35 @@
     float floatValue;
     bool boolValue;
     char * stringValue;
+    compareType compareType;
 }
 
 %token<intValue> TOKEN_INT
 %token<floatValue> TOKEN_FLOAT
 %token<boolValue> TOKEN_BOOL
 %token<stringValue> TOKEN_STRING
-%type<node> exp
-%start exps
+
+%token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
+%type<node> VALUE EXP
+%type<compareType> COMPARE
+
+%start EXPS
 
 %%
 
-exps: | exps exp {
+EXPS: | EXPS EXP {
     *tree = $2;
 };
 
-exp: TOKEN_INT {
+COMPARE:
+    TOKEN_LEQ |
+    TOKEN_GEQ |
+    TOKEN_LESS |
+    TOKEN_GREATER |
+    TOKEN_EQ |
+    TOKEN_NEQ
+
+VALUE: TOKEN_INT {
     Node *node = createNode();
     node->type = NTOKEN_INT;
     node->data.INT.value = $1;
@@ -52,5 +65,16 @@ TOKEN_STRING {
     node->data.STRING.value = $1;
     $$ = node;
 };
+
+
+EXP: VALUE COMPARE VALUE {
+    Node *node = createNode();
+    node->type = NTOKEN_COMPARE;
+    node->data.COMPARE.type = $2;
+    node->data.COMPARE.left = $1;
+    node->data.COMPARE.right = $3;
+    $$ = node;
+}
+
 
 %%

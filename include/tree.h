@@ -7,8 +7,22 @@ enum nodeType {
     NTOKEN_INT = 0,
     NTOKEN_FLOAT,
     NTOKEN_BOOL,
-    NTOKEN_STRING
+    NTOKEN_STRING,
+    NTOKEN_COMPARE
 };  /* Типы значений */
+
+enum compareType {
+    NTOKEN_GEQ = 0,
+    NTOKEN_LEQ,
+    NTOKEN_LESS,
+    NTOKEN_GREATER,
+    NTOKEN_EQ,
+    NTOKEN_NEQ
+};  /* Типы сравнений */
+
+typedef enum nodeType nodeType;
+
+typedef enum compareType compareType;
 
 struct Node {
     enum nodeType type;
@@ -25,6 +39,11 @@ struct Node {
         struct {
             char * value;
         } STRING;
+        struct {
+            compareType type;
+            struct Node *left;
+            struct Node *right;
+        } COMPARE;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 
@@ -41,5 +60,7 @@ Node *parseQuery(FILE *f);
 Node* createNode();
 
 void freeNode(Node *node);
+
+const char * getTypeCompare(compareType);
 
 void printTree(Node *tree, int tab);

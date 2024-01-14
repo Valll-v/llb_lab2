@@ -13,6 +13,23 @@ Node* createNode() {
     return node;
 }
 
+const char * getTypeCompare(compareType type) {
+    switch (type) {
+        case NTOKEN_LEQ:
+            return "LEQ";
+        case NTOKEN_GEQ:
+            return "GEQ";
+        case NTOKEN_LESS:
+            return "LESS";
+        case NTOKEN_GREATER:
+            return "GREATER";
+        case NTOKEN_EQ:
+            return "EQ";
+        case NTOKEN_NEQ:
+            return "NEQ";
+    }
+}
+
 void printTree(Node *tree, int indentCount) {
     for (int i = 0; i < indentCount; i++) {
         printf(INDENT);
@@ -29,6 +46,11 @@ void printTree(Node *tree, int indentCount) {
             break;
         case NTOKEN_BOOL:
             printf("BOOL(%d)\n", tree->data.BOOL.value);
+            break;
+        case NTOKEN_COMPARE:
+            printf("%s: \n", getTypeCompare(tree->data.COMPARE.type));
+            printTree(tree->data.COMPARE.left, indentCount + 1);
+            printTree(tree->data.COMPARE.right, indentCount + 1);
             break;
     }
 }
