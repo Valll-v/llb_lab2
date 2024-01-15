@@ -21,8 +21,10 @@
 %token<boolValue> TOKEN_BOOL
 %token<stringValue> TOKEN_STRING
 
+%token TOKEN_OPEN TOKEN_CLOSE
+
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
-%type<node> VALUE EXP
+%type<node> EXP VALUE COMPARE_EXP
 %type<compareType> COMPARE
 
 %start EXPS
@@ -32,6 +34,10 @@
 EXPS: | EXPS EXP {
     *tree = $2;
 };
+
+EXP:
+    VALUE |
+    COMPARE_EXP
 
 COMPARE:
     TOKEN_LEQ |
@@ -66,8 +72,10 @@ TOKEN_STRING {
     $$ = node;
 };
 
-
-EXP: VALUE COMPARE VALUE {
+COMPARE_EXP: TOKEN_OPEN COMPARE_EXP TOKEN_CLOSE {
+    $$ = $2;
+} |
+    EXP COMPARE EXP {
     Node *node = createNode();
     node->type = NTOKEN_COMPARE;
     node->data.COMPARE.type = $2;
@@ -75,6 +83,5 @@ EXP: VALUE COMPARE VALUE {
     node->data.COMPARE.right = $3;
     $$ = node;
 }
-
 
 %%

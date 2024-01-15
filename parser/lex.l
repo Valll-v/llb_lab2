@@ -22,6 +22,9 @@
 "=="                { yylval.compareType = 4; return TOKEN_EQ; }
 "!="                { yylval.compareType = 5; return TOKEN_NEQ; }
 
+"("                 { return TOKEN_OPEN; }
+")"                 { return TOKEN_CLOSE; }
+
 
 [a-zA-Z_][a-zA-Z0-9_]* { /* обработка идентификаторов */ }
 
