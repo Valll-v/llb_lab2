@@ -28,10 +28,21 @@
 ","                 { return TOKEN_COMMA;}
 ";"                 { return TOKEN_END;}
 
-
 "SELECT"            { return TOKEN_SELECT; }
 "FROM"              { return TOKEN_FROM; }
 "WHERE"             { return TOKEN_WHERE; }
+
+"CREATE"            { return TOKEN_CREATE; }
+"DROP"              { return TOKEN_DROP; }
+"TABLE"             { return TOKEN_TABLE; }
+
+"DELETE"            { return TOKEN_DELETE; }
+
+"INSERT"            { return TOKEN_INSERT; }
+"INTO"              { return TOKEN_INTO; }
+
+"UPDATE"            { return TOKEN_UPDATE; }
+"SET"               { return TOKEN_SET; }
 
 "OR"                { yylval.logicType = 0; return TOKEN_OR; }
 "AND"               { yylval.logicType = 1; return TOKEN_AND; }
