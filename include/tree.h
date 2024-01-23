@@ -8,7 +8,8 @@ enum nodeType {
     NTOKEN_FLOAT,
     NTOKEN_BOOL,
     NTOKEN_STRING,
-    NTOKEN_COMPARE
+    NTOKEN_COMPARE,
+    NTOKEN_LOGIC
 };  /* Типы значений */
 
 enum compareType {
@@ -20,9 +21,17 @@ enum compareType {
     NTOKEN_NEQ
 };  /* Типы сравнений */
 
+enum logicType {
+    NTOKEN_OR = 0,
+    NTOKEN_AND,
+    NTOKEN_NOT
+};  /* Типы логических операций */
+
 typedef enum nodeType nodeType;
 
 typedef enum compareType compareType;
+
+typedef enum logicType logicType;
 
 struct Node {
     enum nodeType type;
@@ -44,6 +53,11 @@ struct Node {
             struct Node *left;
             struct Node *right;
         } COMPARE;
+        struct {
+            logicType type;
+            struct Node *left;
+            struct Node *right;
+        } LOGIC;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 
@@ -62,5 +76,7 @@ Node* createNode();
 void freeNode(Node *node);
 
 const char * getTypeCompare(compareType);
+
+const char * getTypeLogic(logicType);
 
 void printTree(Node *tree, int tab);

@@ -30,6 +30,17 @@ const char * getTypeCompare(compareType type) {
     }
 }
 
+const char * getTypeLogic(logicType type) {
+    switch (type) {
+        case NTOKEN_AND:
+            return "AND";
+        case NTOKEN_OR:
+            return "OR";
+        case NTOKEN_NOT:
+            return "NOT";
+    }
+}
+
 void printTree(Node *tree, int indentCount) {
     for (int i = 0; i < indentCount; i++) {
         printf(INDENT);
@@ -52,6 +63,12 @@ void printTree(Node *tree, int indentCount) {
             printTree(tree->data.COMPARE.left, indentCount + 1);
             printTree(tree->data.COMPARE.right, indentCount + 1);
             break;
+        case NTOKEN_LOGIC:
+            printf("%s: \n", getTypeLogic(tree->data.LOGIC.type));
+            printTree(tree->data.LOGIC.left, indentCount + 1);
+            if (tree->data.LOGIC.type != NTOKEN_NOT) {
+                printTree(tree->data.COMPARE.right, indentCount + 1);
+            }
     }
 }
 

@@ -11,9 +11,9 @@
 
 [0-9]+              { yylval.intValue = atoi(yytext); return TOKEN_INT; }
 [0-9]+.[0-9]+       { yylval.floatValue = atof(yytext); return TOKEN_FLOAT; }
-\'(.+)\'		    { yylval.stringValue = strdup(yytext); return TOKEN_STRING; }
+\'(.+)\'            { yylval.stringValue = strdup(yytext); return TOKEN_STRING; }
 "false"		        { yylval.boolValue = 0; return TOKEN_BOOL; }
-"true"		        { yylval.boolValue = 1; return TOKEN_BOOL; }
+"true"              { yylval.boolValue = 1; return TOKEN_BOOL; }
 
 ">="                { yylval.compareType = 0; return TOKEN_GEQ; }
 "<="                { yylval.compareType = 1; return TOKEN_LEQ; }
@@ -25,6 +25,9 @@
 "("                 { return TOKEN_OPEN; }
 ")"                 { return TOKEN_CLOSE; }
 
+"OR"                { yylval.logicType = 0; return TOKEN_OR; }
+"AND"               { yylval.logicType = 1; return TOKEN_AND; }
+"NOT"               { yylval.logicType = 2; return TOKEN_NOT; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { /* обработка идентификаторов */ }
 

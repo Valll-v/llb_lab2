@@ -14,6 +14,7 @@
     bool boolValue;
     char * stringValue;
     compareType compareType;
+    logicType logicType;
 }
 
 %token<intValue> TOKEN_INT
@@ -24,8 +25,10 @@
 %token TOKEN_OPEN TOKEN_CLOSE
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
-%type<node> EXP VALUE COMPARE_EXP
+%token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT
+%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP
 %type<compareType> COMPARE
+%type<logicType> LOGIC
 
 %start EXPS
 
@@ -37,7 +40,8 @@ EXPS: | EXPS EXP {
 
 EXP:
     VALUE |
-    COMPARE_EXP
+    COMPARE_EXP |
+    LOGIC_EXP
 
 COMPARE:
     TOKEN_LEQ |
@@ -46,6 +50,11 @@ COMPARE:
     TOKEN_GREATER |
     TOKEN_EQ |
     TOKEN_NEQ
+
+LOGIC:
+    TOKEN_OR |
+    TOKEN_AND |
+    TOKEN_NOT
 
 VALUE: TOKEN_INT {
     Node *node = createNode();
@@ -72,10 +81,30 @@ TOKEN_STRING {
     $$ = node;
 };
 
+LOGIC_EXP: TOKEN_OPEN LOGIC_EXP TOKEN_CLOSE {
+    $$ = $2;
+} |
+TOKEN_NOT EXP {
+    Node *node = createNode();
+    node->type = NTOKEN_LOGIC;
+    node->data.LOGIC.type = $1;
+    node->data.LOGIC.left = $2;
+    node->data.LOGIC.right = NULL;
+    $$ = node;
+} |
+EXP LOGIC EXP {
+    Node *node = createNode();
+    node->type = NTOKEN_LOGIC;
+    node->data.LOGIC.type = $2;
+    node->data.LOGIC.left = $1;
+    node->data.LOGIC.right = $3;
+    $$ = node;
+}
+
 COMPARE_EXP: TOKEN_OPEN COMPARE_EXP TOKEN_CLOSE {
     $$ = $2;
 } |
-    EXP COMPARE EXP {
+EXP COMPARE EXP {
     Node *node = createNode();
     node->type = NTOKEN_COMPARE;
     node->data.COMPARE.type = $2;
