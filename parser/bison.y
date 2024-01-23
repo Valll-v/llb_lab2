@@ -22,11 +22,11 @@
 %token<boolValue> TOKEN_BOOL
 %token<stringValue> TOKEN_STRING TOKEN_NAME
 
-%token TOKEN_OPEN TOKEN_CLOSE TOKEN_END TOKEN_SELECT TOKEN_FROM TOKEN_DELIMITER
+%token TOKEN_OPEN TOKEN_CLOSE TOKEN_SELECT TOKEN_FROM TOKEN_DOT TOKEN_COMMA
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
 %token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT
-%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN
+%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST
 %type<compareType> COMPARE
 %type<logicType> LOGIC
 
@@ -82,6 +82,20 @@ TOKEN_STRING {
     $$ = node;
 };
 
+REFERENCE_LINKED_LIST: REFERENCE TOKEN_COMMA REFERENCE_LINKED_LIST {
+    Node *node = createNode();
+    node->type = NTOKEN_REFERENCE_LINKED_LIST;
+    node->data.REFERENCE_LINKED_LIST.reference = $1;
+    node->data.REFERENCE_LINKED_LIST.next = $3;
+    $$ = node;
+} |
+REFERENCE {
+    Node *node = createNode();
+    node->type = NTOKEN_REFERENCE_LINKED_LIST;
+    node->data.REFERENCE_LINKED_LIST.reference = $1;
+    node->data.REFERENCE_LINKED_LIST.next = NULL;
+    $$ = node;
+};
 TABLE: TOKEN_NAME  {
     Node *node = createNode();
     node->type = NTOKEN_TABLE;
@@ -94,14 +108,14 @@ COLUMN: TOKEN_NAME  {
     node->data.COLUMN.column = $1;
     $$ = node;
 };
-REFERENCE: TABLE TOKEN_DELIMITER COLUMN {
+REFERENCE: TABLE TOKEN_DOT COLUMN {
     Node *node = createNode();
     node->type = NTOKEN_REFERENCE;
     node->data.REFERENCE.table = $1;
     node->data.REFERENCE.column = $3;
     $$ = node;
 };
-SELECT_EXP: TOKEN_SELECT REFERENCE TOKEN_FROM TABLE {
+SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE {
     Node *node = createNode();
     node->type = NTOKEN_SELECT;
     node->data.SELECT.reference = $2;

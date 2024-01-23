@@ -24,7 +24,9 @@
 
 "("                 { return TOKEN_OPEN; }
 ")"                 { return TOKEN_CLOSE; }
-"."                 { return TOKEN_DELIMITER;}
+"."                 { return TOKEN_DOT;}
+","                 { return TOKEN_COMMA;}
+
 
 "SELECT"            { return TOKEN_SELECT; }
 "FROM"              { return TOKEN_FROM; }

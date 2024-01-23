@@ -14,6 +14,7 @@ enum nodeType {
     NTOKEN_COLUMN,
     NTOKEN_REFERENCE,
     NTOKEN_SELECT,
+    NTOKEN_REFERENCE_LINKED_LIST
 };  /* Типы значений */
 
 enum compareType {
@@ -68,6 +69,10 @@ struct Node {
             struct Node *left;
             struct Node *right;
         } LOGIC;
+        struct {
+            struct Node *reference;
+            struct Node *next;
+        } REFERENCE_LINKED_LIST;
         struct {
             struct Node *table;
             struct Node *column;

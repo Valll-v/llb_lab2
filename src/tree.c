@@ -76,6 +76,14 @@ void printTree(Node *tree, int indentCount) {
         case NTOKEN_COLUMN:
             printf("COLUMN(%s)\n", tree->data.COLUMN.column);
             break;
+        case NTOKEN_REFERENCE_LINKED_LIST:
+            printf("TABLE_REFERENCES:\n");
+            printTree(tree->data.REFERENCE_LINKED_LIST.reference, indentCount + 1);
+            while (tree->data.REFERENCE_LINKED_LIST.next != NULL) {
+                tree = tree->data.REFERENCE_LINKED_LIST.next;
+                printTree(tree->data.REFERENCE_LINKED_LIST.reference, indentCount + 1);
+            }
+            break;
         case NTOKEN_REFERENCE:
             printf("TABLE_REFERENCE:\n");
             printTree(tree->data.REFERENCE.table, indentCount + 1);
