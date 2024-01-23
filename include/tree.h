@@ -16,7 +16,10 @@ enum nodeType {
     NTOKEN_SELECT,
     NTOKEN_REFERENCE_LINKED_LIST,
     NTOKEN_WHERE,
-    NTOKEN_QUERIES_LINKED_LIST
+    NTOKEN_SET,
+    NTOKEN_SET_LINKED_LIST,
+    NTOKEN_QUERIES_LINKED_LIST,
+    NTOKEN_UPDATE
 };  /* Типы значений */
 
 enum compareType {
@@ -88,6 +91,19 @@ struct Node {
             struct Node *table;
             struct Node *where;
         } SELECT;
+        struct {
+            struct Node *column;
+            struct Node *value;
+        } SET;
+        struct {
+            struct Node *set;
+            struct Node *next;
+        } SET_LINKED_LIST;
+        struct {
+            struct Node *set_list;
+            struct Node *table;
+            struct Node *where;
+        } UPDATE;
         struct {
             struct Node *logic;
         } WHERE;

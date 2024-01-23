@@ -56,6 +56,7 @@ void printTree(Node *tree, int indentCount) {
             printf("QUERIES:\n");
             printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
             while (tree->data.QUERIES_LINKED_LIST.next != NULL) {
+                printf("----------------------------------------------\n");
                 tree = tree->data.QUERIES_LINKED_LIST.next;
                 printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
             }
@@ -114,6 +115,31 @@ void printTree(Node *tree, int indentCount) {
                 printf("WHERE\n");
                 printTree(tree->data.SELECT.where->data.WHERE.logic, indentCount + 1);
             }
+            break;
+        case NTOKEN_UPDATE:
+            printf("UPDATE\n");
+            printTree(tree->data.UPDATE.table, indentCount + 1);
+            printIndent(indentCount);
+            printf("SET\n");
+            printTree(tree->data.UPDATE.set_list, indentCount + 1);
+            printIndent(indentCount);
+            if (tree->data.UPDATE.where != NULL) {
+                printf("WHERE\n");
+                printTree(tree->data.UPDATE.where->data.WHERE.logic, indentCount + 1);
+            }
+            break;
+        case NTOKEN_SET_LINKED_LIST:
+            printf("SETS:\n");
+            printTree(tree->data.SET_LINKED_LIST.set, indentCount + 1);
+            while (tree->data.SET_LINKED_LIST.next != NULL) {
+                tree = tree->data.SET_LINKED_LIST.next;
+                printTree(tree->data.SET_LINKED_LIST.set, indentCount + 1);
+            }
+            break;
+        case NTOKEN_SET:
+            printf("SET:\n");
+            printTree(tree->data.SET.column, indentCount + 1);
+            printTree(tree->data.SET.value, indentCount + 1);
             break;
     }
 }

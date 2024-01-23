@@ -22,13 +22,14 @@
 %token<boolValue> TOKEN_BOOL
 %token<stringValue> TOKEN_STRING TOKEN_NAME
 
-%token TOKEN_OPEN TOKEN_CLOSE TOKEN_DOT TOKEN_COMMA
-%token TOKEN_SELECT TOKEN_FROM TOKEN_WHERE
+%token TOKEN_OPEN TOKEN_CLOSE TOKEN_DOT TOKEN_COMMA TOKEN_ASSIGNMENT
+%token TOKEN_SELECT TOKEN_FROM TOKEN_WHERE TOKEN_CREATE TOKEN_DROP TOKEN_TABLE
+%token TOKEN_DELETE TOKEN_INSERT TOKEN_INTO TOKEN_UPDATE TOKEN_SET
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
 %token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT TOKEN_END
 %type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST WHERE QUERY
-%type<node> QUERIES_LINKED_LIST
+%type<node> QUERIES_LINKED_LIST UPDATE_EXP SET_LINKED_LIST SET
 %type<compareType> COMPARE
 %type<logicType> LOGIC
 
@@ -51,7 +52,8 @@ QUERIES_LINKED_LIST:  {
 };
 
 QUERY:
-    SELECT_EXP
+    SELECT_EXP |
+    UPDATE_EXP
 
 EXP:
     VALUE |
@@ -98,6 +100,27 @@ TOKEN_STRING {
     $$ = node;
 };
 
+SET: COLUMN TOKEN_ASSIGNMENT VALUE {
+    Node *node = createNode();
+    node->type = NTOKEN_SET;
+    node->data.SET.column = $1;
+    node->data.SET.value = $3;
+    $$ = node;
+};
+SET_LINKED_LIST: SET TOKEN_COMMA SET_LINKED_LIST {
+    Node *node = createNode();
+    node->type = NTOKEN_SET_LINKED_LIST;
+    node->data.SET_LINKED_LIST.set = $1;
+    node->data.SET_LINKED_LIST.next = $3;
+    $$ = node;
+} |
+SET {
+    Node *node = createNode();
+    node->type = NTOKEN_SET_LINKED_LIST;
+    node->data.SET_LINKED_LIST.set = $1;
+    node->data.SET_LINKED_LIST.next = NULL;
+    $$ = node;
+};
 REFERENCE_LINKED_LIST: REFERENCE TOKEN_COMMA REFERENCE_LINKED_LIST {
     Node *node = createNode();
     node->type = NTOKEN_REFERENCE_LINKED_LIST;
@@ -137,6 +160,14 @@ SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE WHERE {
     node->data.SELECT.reference = $2;
     node->data.SELECT.table = $4;
     node->data.SELECT.where = $5;
+    $$ = node;
+};
+UPDATE_EXP: TOKEN_UPDATE TABLE TOKEN_SET SET_LINKED_LIST WHERE {
+    Node *node = createNode();
+    node->type = NTOKEN_UPDATE;
+    node->data.UPDATE.set_list = $4;
+    node->data.UPDATE.table = $2;
+    node->data.UPDATE.where = $5;
     $$ = node;
 };
 WHERE: {

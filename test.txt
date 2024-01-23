@@ -1,25 +1,31 @@
 SELECT
-    table.column, table.column1
+    "table"."column", "table"."column1"
 FROM
-    table
+    "tabl"
 WHERE
-    (table.column AND (3 > 3));
+    ("table"."column" AND (3 > 3));
 
 SELECT
-    table.column, table.column1
+    "table"."column", "table"."column1"
 FROM
-    table;
+    "table";
 
 SELECT
-    table.column, table.column1
+    "table"."column", "table"."column1"
 FROM
-    table
+    "table"
 WHERE
-    (NOT(table.column) AND (3 > 3));
+    (NOT("table"."column") AND (3 > 3));
 
 SELECT
-    table.column, table.column1
+    "table"."column", "table"."column1"
 FROM
-    table
+    "table"
 WHERE
-    (NOT(table.column) AND (3 > 3));
+    (NOT("table"."column") AND "table"."column" == 'aboba');
+
+UPDATE
+    "table"
+SET "aboba" = 1, "aboba" = 2
+WHERE
+    (NOT("table"."column") AND "table"."column" == 'aboba');

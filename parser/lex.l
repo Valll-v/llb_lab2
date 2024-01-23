@@ -21,6 +21,7 @@
 ">"                 { yylval.compareType = 3; return TOKEN_GREATER; }
 "=="                { yylval.compareType = 4; return TOKEN_EQ; }
 "!="                { yylval.compareType = 5; return TOKEN_NEQ; }
+"="                 { return TOKEN_ASSIGNMENT; }
 
 "("                 { return TOKEN_OPEN; }
 ")"                 { return TOKEN_CLOSE; }
@@ -48,7 +49,7 @@
 "AND"               { yylval.logicType = 1; return TOKEN_AND; }
 "NOT"               { yylval.logicType = 2; return TOKEN_NOT; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringValue = strdup(yytext); return TOKEN_NAME; }
+\"[a-zA-Z_][a-zA-Z0-9_]*\" { yylval.stringValue = strdup(yytext); return TOKEN_NAME; }
 
 [ \n\t\r]	;
 . { printf("Unknown symbol: %s\n", yytext); };
