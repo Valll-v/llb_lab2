@@ -24,12 +24,16 @@
 
 "("                 { return TOKEN_OPEN; }
 ")"                 { return TOKEN_CLOSE; }
+"."                 { return TOKEN_DELIMITER;}
+
+"SELECT"            { return TOKEN_SELECT; }
+"FROM"              { return TOKEN_FROM; }
 
 "OR"                { yylval.logicType = 0; return TOKEN_OR; }
 "AND"               { yylval.logicType = 1; return TOKEN_AND; }
 "NOT"               { yylval.logicType = 2; return TOKEN_NOT; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { /* обработка идентификаторов */ }
+[a-zA-Z_][a-zA-Z0-9_]* { yylval.stringValue = strdup(yytext); return TOKEN_NAME; }
 
 [ \n\t\r]	;
 . { printf("Unknown symbol: %s\n", yytext); };

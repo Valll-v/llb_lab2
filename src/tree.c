@@ -69,6 +69,24 @@ void printTree(Node *tree, int indentCount) {
             if (tree->data.LOGIC.type != NTOKEN_NOT) {
                 printTree(tree->data.COMPARE.right, indentCount + 1);
             }
+            break;
+        case NTOKEN_TABLE:
+            printf("TABLE(%s)\n", tree->data.TABLE.table);
+            break;
+        case NTOKEN_COLUMN:
+            printf("COLUMN(%s)\n", tree->data.COLUMN.column);
+            break;
+        case NTOKEN_REFERENCE:
+            printf("TABLE_REFERENCE:\n");
+            printTree(tree->data.REFERENCE.table, indentCount + 1);
+            printTree(tree->data.REFERENCE.column, indentCount + 1);
+            break;
+        case NTOKEN_SELECT:
+            printf("SELECT\n");
+            printTree(tree->data.SELECT.reference, indentCount + 1);
+            printf("FROM\n");
+            printTree(tree->data.SELECT.table, indentCount + 1);
+            break;
     }
 }
 

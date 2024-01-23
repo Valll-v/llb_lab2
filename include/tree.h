@@ -9,7 +9,11 @@ enum nodeType {
     NTOKEN_BOOL,
     NTOKEN_STRING,
     NTOKEN_COMPARE,
-    NTOKEN_LOGIC
+    NTOKEN_LOGIC,
+    NTOKEN_TABLE,
+    NTOKEN_COLUMN,
+    NTOKEN_REFERENCE,
+    NTOKEN_SELECT,
 };  /* Типы значений */
 
 enum compareType {
@@ -46,8 +50,14 @@ struct Node {
             bool value;
         } BOOL;
         struct {
-            char * value;
+            char *value;
         } STRING;
+        struct {
+            char *table;
+        } TABLE;
+        struct {
+            char *column;
+        } COLUMN;
         struct {
             compareType type;
             struct Node *left;
@@ -58,6 +68,14 @@ struct Node {
             struct Node *left;
             struct Node *right;
         } LOGIC;
+        struct {
+            struct Node *table;
+            struct Node *column;
+        } REFERENCE;
+        struct {
+            struct Node *reference;
+            struct Node *table;
+        } SELECT;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 

@@ -20,13 +20,13 @@
 %token<intValue> TOKEN_INT
 %token<floatValue> TOKEN_FLOAT
 %token<boolValue> TOKEN_BOOL
-%token<stringValue> TOKEN_STRING
+%token<stringValue> TOKEN_STRING TOKEN_NAME
 
-%token TOKEN_OPEN TOKEN_CLOSE
+%token TOKEN_OPEN TOKEN_CLOSE TOKEN_END TOKEN_SELECT TOKEN_FROM TOKEN_DELIMITER
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
 %token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT
-%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP
+%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN
 %type<compareType> COMPARE
 %type<logicType> LOGIC
 
@@ -41,7 +41,8 @@ EXPS: | EXPS EXP {
 EXP:
     VALUE |
     COMPARE_EXP |
-    LOGIC_EXP
+    LOGIC_EXP |
+    SELECT_EXP
 
 COMPARE:
     TOKEN_LEQ |
@@ -78,6 +79,33 @@ TOKEN_STRING {
     Node *node = createNode();
     node->type = NTOKEN_STRING;
     node->data.STRING.value = $1;
+    $$ = node;
+};
+
+TABLE: TOKEN_NAME  {
+    Node *node = createNode();
+    node->type = NTOKEN_TABLE;
+    node->data.TABLE.table = $1;
+    $$ = node;
+};
+COLUMN: TOKEN_NAME  {
+    Node *node = createNode();
+    node->type = NTOKEN_COLUMN;
+    node->data.COLUMN.column = $1;
+    $$ = node;
+};
+REFERENCE: TABLE TOKEN_DELIMITER COLUMN {
+    Node *node = createNode();
+    node->type = NTOKEN_REFERENCE;
+    node->data.REFERENCE.table = $1;
+    node->data.REFERENCE.column = $3;
+    $$ = node;
+};
+SELECT_EXP: TOKEN_SELECT REFERENCE TOKEN_FROM TABLE {
+    Node *node = createNode();
+    node->type = NTOKEN_SELECT;
+    node->data.SELECT.reference = $2;
+    node->data.SELECT.table = $4;
     $$ = node;
 };
 
