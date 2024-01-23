@@ -30,6 +30,19 @@ const char * getTypeCompare(compareType type) {
     }
 }
 
+const char * getTypeField(fieldType type) {
+    switch (type) {
+        case NTOKEN_INTEGER_FIELD:
+            return "INTEGER";
+        case NTOKEN_FLOAT_FIELD:
+            return "FLOAT";
+        case NTOKEN_STRING_FIELD:
+            return "STRING";
+        case NTOKEN_BOOL_FIELD:
+            return "BOOL";
+    }
+}
+
 const char * getTypeLogic(logicType type) {
     switch (type) {
         case NTOKEN_AND:
@@ -52,13 +65,13 @@ void printIndent(int indentCount) {
 void printTree(Node *tree, int indentCount) {
     printIndent(indentCount);
     switch (tree->type) {
-        case NTOKEN_QUERIES_LINKED_LIST:
+        case NTOKEN_QUERIES_LIST:
             printf("QUERIES:\n");
-            printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
-            while (tree->data.QUERIES_LINKED_LIST.next != NULL) {
+            printTree(tree->data.QUERIES_LIST.query, indentCount + 1);
+            while (tree->data.QUERIES_LIST.next != NULL) {
                 printf("----------------------------------------------\n");
-                tree = tree->data.QUERIES_LINKED_LIST.next;
-                printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
+                tree = tree->data.QUERIES_LIST.next;
+                printTree(tree->data.QUERIES_LIST.query, indentCount + 1);
             }
             break;
         case NTOKEN_INT:
@@ -91,12 +104,12 @@ void printTree(Node *tree, int indentCount) {
         case NTOKEN_COLUMN:
             printf("COLUMN(%s)\n", tree->data.COLUMN.column);
             break;
-        case NTOKEN_REFERENCE_LINKED_LIST:
+        case NTOKEN_REFERENCE_LIST:
             printf("TABLE_REFERENCES:\n");
-            printTree(tree->data.REFERENCE_LINKED_LIST.reference, indentCount + 1);
-            while (tree->data.REFERENCE_LINKED_LIST.next != NULL) {
-                tree = tree->data.REFERENCE_LINKED_LIST.next;
-                printTree(tree->data.REFERENCE_LINKED_LIST.reference, indentCount + 1);
+            printTree(tree->data.REFERENCE_LIST.reference, indentCount + 1);
+            while (tree->data.REFERENCE_LIST.next != NULL) {
+                tree = tree->data.REFERENCE_LIST.next;
+                printTree(tree->data.REFERENCE_LIST.reference, indentCount + 1);
             }
             break;
         case NTOKEN_REFERENCE:
@@ -128,18 +141,35 @@ void printTree(Node *tree, int indentCount) {
                 printTree(tree->data.UPDATE.where->data.WHERE.logic, indentCount + 1);
             }
             break;
-        case NTOKEN_SET_LINKED_LIST:
+        case NTOKEN_SET_LIST:
             printf("SETS:\n");
-            printTree(tree->data.SET_LINKED_LIST.set, indentCount + 1);
-            while (tree->data.SET_LINKED_LIST.next != NULL) {
-                tree = tree->data.SET_LINKED_LIST.next;
-                printTree(tree->data.SET_LINKED_LIST.set, indentCount + 1);
+            printTree(tree->data.SET_LIST.set, indentCount + 1);
+            while (tree->data.SET_LIST.next != NULL) {
+                tree = tree->data.SET_LIST.next;
+                printTree(tree->data.SET_LIST.set, indentCount + 1);
             }
             break;
         case NTOKEN_SET:
             printf("SET:\n");
             printTree(tree->data.SET.column, indentCount + 1);
             printTree(tree->data.SET.value, indentCount + 1);
+            break;
+        case NTOKEN_CREATE:
+            printf("CREATE TABLE\n");
+            printTree(tree->data.CREATE.table, indentCount + 1);
+            printTree(tree->data.CREATE.field_list, indentCount + 1);
+            break;
+        case NTOKEN_FIELD_LIST:
+            printf("FIELDS:\n");
+            printTree(tree->data.FIELD_LIST.field, indentCount + 1);
+            while (tree->data.FIELD_LIST.next != NULL) {
+                tree = tree->data.FIELD_LIST.next;
+            printTree(tree->data.FIELD_LIST.field, indentCount + 1);
+            }
+            break;
+        case NTOKEN_FIELD:
+            printf("%s: \n", getTypeField(tree->data.FIELD.type));
+            printTree(tree->data.FIELD.column, indentCount + 1);
             break;
     }
 }

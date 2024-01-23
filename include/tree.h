@@ -14,12 +14,15 @@ enum nodeType {
     NTOKEN_COLUMN,
     NTOKEN_REFERENCE,
     NTOKEN_SELECT,
-    NTOKEN_REFERENCE_LINKED_LIST,
+    NTOKEN_REFERENCE_LIST,
     NTOKEN_WHERE,
     NTOKEN_SET,
-    NTOKEN_SET_LINKED_LIST,
-    NTOKEN_QUERIES_LINKED_LIST,
-    NTOKEN_UPDATE
+    NTOKEN_SET_LIST,
+    NTOKEN_QUERIES_LIST,
+    NTOKEN_UPDATE,
+    NTOKEN_CREATE,
+    NTOKEN_FIELD_LIST,
+    NTOKEN_FIELD
 };  /* Типы значений */
 
 enum compareType {
@@ -37,7 +40,16 @@ enum logicType {
     NTOKEN_NOT
 };  /* Типы логических операций */
 
+enum fieldType {
+    NTOKEN_INTEGER_FIELD = 0,
+    NTOKEN_FLOAT_FIELD,
+    NTOKEN_STRING_FIELD,
+    NTOKEN_BOOL_FIELD
+};
+
 typedef enum nodeType nodeType;
+
+typedef enum fieldType fieldType;
 
 typedef enum compareType compareType;
 
@@ -49,7 +61,8 @@ struct Node {
         struct {
             struct Node *query;
             struct Node *next;
-        } QUERIES_LINKED_LIST;
+        } QUERIES_LIST;
+
         struct {
             int value;
         } INT;
@@ -62,26 +75,30 @@ struct Node {
         struct {
             char *value;
         } STRING;
+
         struct {
             char *table;
         } TABLE;
         struct {
             char *column;
         } COLUMN;
+
         struct {
             compareType type;
             struct Node *left;
             struct Node *right;
         } COMPARE;
+
         struct {
             logicType type;
             struct Node *left;
             struct Node *right;
         } LOGIC;
+
         struct {
             struct Node *reference;
             struct Node *next;
-        } REFERENCE_LINKED_LIST;
+        } REFERENCE_LIST;
         struct {
             struct Node *table;
             struct Node *column;
@@ -91,6 +108,7 @@ struct Node {
             struct Node *table;
             struct Node *where;
         } SELECT;
+
         struct {
             struct Node *column;
             struct Node *value;
@@ -98,15 +116,29 @@ struct Node {
         struct {
             struct Node *set;
             struct Node *next;
-        } SET_LINKED_LIST;
+        } SET_LIST;
         struct {
             struct Node *set_list;
             struct Node *table;
             struct Node *where;
         } UPDATE;
+
         struct {
             struct Node *logic;
         } WHERE;
+
+        struct {
+            struct Node *column;
+            fieldType type;
+        } FIELD;
+        struct {
+            struct Node *field;
+            struct Node *next;
+        } FIELD_LIST;
+        struct {
+            struct Node *table;
+            struct Node *field_list;
+        } CREATE;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 
@@ -125,6 +157,8 @@ Node* createNode();
 void freeNode(Node *node);
 
 const char * getTypeCompare(compareType);
+
+const char * getTypeField(fieldType);
 
 const char * getTypeLogic(logicType);
 

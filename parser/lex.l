@@ -34,6 +34,10 @@
 "WHERE"             { return TOKEN_WHERE; }
 
 "CREATE"            { return TOKEN_CREATE; }
+"INTEGER"           { yylval.fieldType = 0; return TOKEN_INT_FIELD; }
+"FLOAT"             { yylval.fieldType = 1; return TOKEN_FLOAT_FIELD; }
+"STRING"            { yylval.fieldType = 2; return TOKEN_STRING_FIELD; }
+"BOOL"              { yylval.fieldType = 3; return TOKEN_BOOL_FIELD; }
 "DROP"              { return TOKEN_DROP; }
 "TABLE"             { return TOKEN_TABLE; }
 

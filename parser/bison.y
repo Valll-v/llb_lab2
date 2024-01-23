@@ -15,6 +15,7 @@
     char * stringValue;
     compareType compareType;
     logicType logicType;
+    fieldType fieldType;
 }
 
 %token<intValue> TOKEN_INT
@@ -28,32 +29,39 @@
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
 %token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT TOKEN_END
-%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST WHERE QUERY
-%type<node> QUERIES_LINKED_LIST UPDATE_EXP SET_LINKED_LIST SET
+%token<fieldType> TOKEN_INT_FIELD TOKEN_FLOAT_FIELD TOKEN_STRING_FIELD TOKEN_BOOL_FIELD
+%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LIST WHERE QUERY
+%type<node> QUERIES_LIST UPDATE_EXP SET_LIST SET CREATE_EXP FIELD_LIST FIELD
 %type<compareType> COMPARE
 %type<logicType> LOGIC
+%type<fieldType> FIELD_TYPE
 
 %start QUERIES
 
 %%
 
-QUERIES: | QUERIES_LINKED_LIST {
+
+QUERIES: | QUERIES_LIST {
     *tree = $1;
 };
 
-QUERIES_LINKED_LIST:  {
+
+QUERIES_LIST:  {
     $$ = NULL;
-} | QUERY TOKEN_END QUERIES_LINKED_LIST {
+} | QUERY TOKEN_END QUERIES_LIST {
     Node *node = createNode();
-    node->type = NTOKEN_QUERIES_LINKED_LIST;
-    node->data.QUERIES_LINKED_LIST.query = $1;
-    node->data.QUERIES_LINKED_LIST.next = $3;
+    node->type = NTOKEN_QUERIES_LIST;
+    node->data.QUERIES_LIST.query = $1;
+    node->data.QUERIES_LIST.next = $3;
     $$ = node;
 };
 
+
 QUERY:
     SELECT_EXP |
-    UPDATE_EXP
+    UPDATE_EXP |
+    CREATE_EXP
+
 
 EXP:
     VALUE |
@@ -61,6 +69,7 @@ EXP:
     LOGIC_EXP |
     SELECT_EXP |
     REFERENCE
+
 
 COMPARE:
     TOKEN_LEQ |
@@ -70,10 +79,18 @@ COMPARE:
     TOKEN_EQ |
     TOKEN_NEQ
 
+
+FIELD_TYPE: TOKEN_INT_FIELD |
+    TOKEN_FLOAT_FIELD |
+    TOKEN_STRING_FIELD |
+    TOKEN_BOOL_FIELD
+
+
 LOGIC:
     TOKEN_OR |
     TOKEN_AND |
     TOKEN_NOT
+
 
 VALUE: TOKEN_INT {
     Node *node = createNode();
@@ -100,6 +117,7 @@ TOKEN_STRING {
     $$ = node;
 };
 
+
 SET: COLUMN TOKEN_ASSIGNMENT VALUE {
     Node *node = createNode();
     node->type = NTOKEN_SET;
@@ -107,32 +125,42 @@ SET: COLUMN TOKEN_ASSIGNMENT VALUE {
     node->data.SET.value = $3;
     $$ = node;
 };
-SET_LINKED_LIST: SET TOKEN_COMMA SET_LINKED_LIST {
+SET_LIST: SET TOKEN_COMMA SET_LIST {
     Node *node = createNode();
-    node->type = NTOKEN_SET_LINKED_LIST;
-    node->data.SET_LINKED_LIST.set = $1;
-    node->data.SET_LINKED_LIST.next = $3;
+    node->type = NTOKEN_SET_LIST;
+    node->data.SET_LIST.set = $1;
+    node->data.SET_LIST.next = $3;
     $$ = node;
 } |
 SET {
     Node *node = createNode();
-    node->type = NTOKEN_SET_LINKED_LIST;
-    node->data.SET_LINKED_LIST.set = $1;
-    node->data.SET_LINKED_LIST.next = NULL;
+    node->type = NTOKEN_SET_LIST;
+    node->data.SET_LIST.set = $1;
+    node->data.SET_LIST.next = NULL;
     $$ = node;
 };
-REFERENCE_LINKED_LIST: REFERENCE TOKEN_COMMA REFERENCE_LINKED_LIST {
+UPDATE_EXP: TOKEN_UPDATE TABLE TOKEN_SET SET_LIST WHERE {
     Node *node = createNode();
-    node->type = NTOKEN_REFERENCE_LINKED_LIST;
-    node->data.REFERENCE_LINKED_LIST.reference = $1;
-    node->data.REFERENCE_LINKED_LIST.next = $3;
+    node->type = NTOKEN_UPDATE;
+    node->data.UPDATE.set_list = $4;
+    node->data.UPDATE.table = $2;
+    node->data.UPDATE.where = $5;
+    $$ = node;
+};
+
+
+REFERENCE_LIST: REFERENCE TOKEN_COMMA REFERENCE_LIST {
+    Node *node = createNode();
+    node->type = NTOKEN_REFERENCE_LIST;
+    node->data.REFERENCE_LIST.reference = $1;
+    node->data.REFERENCE_LIST.next = $3;
     $$ = node;
 } |
 REFERENCE {
     Node *node = createNode();
-    node->type = NTOKEN_REFERENCE_LINKED_LIST;
-    node->data.REFERENCE_LINKED_LIST.reference = $1;
-    node->data.REFERENCE_LINKED_LIST.next = NULL;
+    node->type = NTOKEN_REFERENCE_LIST;
+    node->data.REFERENCE_LIST.reference = $1;
+    node->data.REFERENCE_LIST.next = NULL;
     $$ = node;
 };
 TABLE: TOKEN_NAME  {
@@ -154,7 +182,7 @@ REFERENCE: TABLE TOKEN_DOT COLUMN {
     node->data.REFERENCE.column = $3;
     $$ = node;
 };
-SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE WHERE {
+SELECT_EXP: TOKEN_SELECT REFERENCE_LIST TOKEN_FROM TABLE WHERE {
     Node *node = createNode();
     node->type = NTOKEN_SELECT;
     node->data.SELECT.reference = $2;
@@ -162,14 +190,8 @@ SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE WHERE {
     node->data.SELECT.where = $5;
     $$ = node;
 };
-UPDATE_EXP: TOKEN_UPDATE TABLE TOKEN_SET SET_LINKED_LIST WHERE {
-    Node *node = createNode();
-    node->type = NTOKEN_UPDATE;
-    node->data.UPDATE.set_list = $4;
-    node->data.UPDATE.table = $2;
-    node->data.UPDATE.where = $5;
-    $$ = node;
-};
+
+
 WHERE: {
     $$ = NULL;
 } | TOKEN_WHERE EXP {
@@ -178,6 +200,37 @@ WHERE: {
     node->data.WHERE.logic = $2;
     $$ = node;
 };
+
+
+FIELD_LIST: FIELD TOKEN_COMMA FIELD_LIST {
+    Node *node = createNode();
+    node->type = NTOKEN_FIELD_LIST;
+    node->data.FIELD_LIST.field = $1;
+    node->data.FIELD_LIST.next = $3;
+    $$ = node;
+} |
+FIELD {
+    Node *node = createNode();
+    node->type = NTOKEN_FIELD_LIST;
+    node->data.FIELD_LIST.field = $1;
+    node->data.FIELD_LIST.next = NULL;
+    $$ = node;
+};
+FIELD: COLUMN FIELD_TYPE {
+    Node *node = createNode();
+    node->type = NTOKEN_FIELD;
+    node->data.FIELD.column = $1;
+    node->data.FIELD.type = $2;
+    $$ = node;
+};
+CREATE_EXP: TOKEN_CREATE TOKEN_TABLE TABLE TOKEN_OPEN FIELD_LIST TOKEN_CLOSE {
+    Node *node = createNode();
+    node->type = NTOKEN_CREATE;
+    node->data.CREATE.table = $3;
+    node->data.CREATE.field_list = $5;
+    $$ = node;
+};
+
 
 LOGIC_EXP: TOKEN_OPEN LOGIC_EXP TOKEN_CLOSE {
     $$ = $2;
@@ -199,6 +252,7 @@ EXP LOGIC EXP {
     $$ = node;
 }
 
+
 COMPARE_EXP: TOKEN_OPEN COMPARE_EXP TOKEN_CLOSE {
     $$ = $2;
 } |
@@ -210,5 +264,6 @@ EXP COMPARE EXP {
     node->data.COMPARE.right = $3;
     $$ = node;
 }
+
 
 %%

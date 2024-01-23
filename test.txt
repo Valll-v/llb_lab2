@@ -1,21 +1,7 @@
 SELECT
     "table"."column", "table"."column1"
 FROM
-    "tabl"
-WHERE
-    ("table"."column" AND (3 > 3));
-
-SELECT
-    "table"."column", "table"."column1"
-FROM
     "table";
-
-SELECT
-    "table"."column", "table"."column1"
-FROM
-    "table"
-WHERE
-    (NOT("table"."column") AND (3 > 3));
 
 SELECT
     "table"."column", "table"."column1"
@@ -29,3 +15,11 @@ UPDATE
 SET "aboba" = 1, "aboba" = 2
 WHERE
     (NOT("table"."column") AND "table"."column" == 'aboba');
+
+CREATE TABLE "fight_record"
+(
+    "id" INTEGER,
+    "responsible_id" INTEGER,
+    "hero_fight_id" INTEGER,
+    "info" STRING
+);
