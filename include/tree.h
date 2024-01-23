@@ -22,7 +22,8 @@ enum nodeType {
     NTOKEN_UPDATE,
     NTOKEN_CREATE,
     NTOKEN_FIELD_LIST,
-    NTOKEN_FIELD
+    NTOKEN_FIELD,
+    NTOKEN_DELETE
 };  /* Типы значений */
 
 enum compareType {
@@ -122,6 +123,11 @@ struct Node {
             struct Node *table;
             struct Node *where;
         } UPDATE;
+
+        struct {
+            struct Node *table;
+            struct Node *where;
+        } DELETE;
 
         struct {
             struct Node *logic;

@@ -171,6 +171,15 @@ void printTree(Node *tree, int indentCount) {
             printf("%s: \n", getTypeField(tree->data.FIELD.type));
             printTree(tree->data.FIELD.column, indentCount + 1);
             break;
+        case NTOKEN_DELETE:
+            printf("DELETE FROM:\n");
+            printTree(tree->data.DELETE.table, indentCount + 1);
+            printIndent(indentCount);
+            if (tree->data.DELETE.where != NULL) {
+                printf("WHERE\n");
+                printTree(tree->data.DELETE.where->data.WHERE.logic, indentCount + 1);
+            }
+            break;
     }
 }
 

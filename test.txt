@@ -23,3 +23,6 @@ CREATE TABLE "fight_record"
     "hero_fight_id" INTEGER,
     "info" STRING
 );
+
+DELETE FROM "fight_record"
+WHERE (NOT("table"."column") AND "table"."column" == 'aboba');
