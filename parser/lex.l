@@ -26,6 +26,7 @@
 ")"                 { return TOKEN_CLOSE; }
 "."                 { return TOKEN_DOT;}
 ","                 { return TOKEN_COMMA;}
+";"                 { return TOKEN_END;}
 
 
 "SELECT"            { return TOKEN_SELECT; }

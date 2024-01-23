@@ -41,11 +41,25 @@ const char * getTypeLogic(logicType type) {
     }
 }
 
-void printTree(Node *tree, int indentCount) {
+
+void printIndent(int indentCount) {
     for (int i = 0; i < indentCount; i++) {
         printf(INDENT);
     }
+}
+
+
+void printTree(Node *tree, int indentCount) {
+    printIndent(indentCount);
     switch (tree->type) {
+        case NTOKEN_QUERIES_LINKED_LIST:
+            printf("QUERIES:\n");
+            printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
+            while (tree->data.QUERIES_LINKED_LIST.next != NULL) {
+                tree = tree->data.QUERIES_LINKED_LIST.next;
+                printTree(tree->data.QUERIES_LINKED_LIST.query, indentCount + 1);
+            }
+            break;
         case NTOKEN_INT:
             printf("INT(%d)\n", tree->data.INT.value);
             break;
@@ -92,10 +106,14 @@ void printTree(Node *tree, int indentCount) {
         case NTOKEN_SELECT:
             printf("SELECT\n");
             printTree(tree->data.SELECT.reference, indentCount + 1);
+            printIndent(indentCount);
             printf("FROM\n");
             printTree(tree->data.SELECT.table, indentCount + 1);
-            printf("WHERE\n");
-            printTree(tree->data.SELECT.where->data.WHERE.logic, indentCount + 1);
+            printIndent(indentCount);
+            if (tree->data.SELECT.where != NULL) {
+                printf("WHERE\n");
+                printTree(tree->data.SELECT.where->data.WHERE.logic, indentCount + 1);
+            }
             break;
     }
 }

@@ -16,6 +16,7 @@ enum nodeType {
     NTOKEN_SELECT,
     NTOKEN_REFERENCE_LINKED_LIST,
     NTOKEN_WHERE,
+    NTOKEN_QUERIES_LINKED_LIST
 };  /* Типы значений */
 
 enum compareType {
@@ -42,6 +43,10 @@ typedef enum logicType logicType;
 struct Node {
     enum nodeType type;
     union {
+        struct {
+            struct Node *query;
+            struct Node *next;
+        } QUERIES_LINKED_LIST;
         struct {
             int value;
         } INT;

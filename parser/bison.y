@@ -26,8 +26,9 @@
 %token TOKEN_SELECT TOKEN_FROM TOKEN_WHERE
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
-%token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT
+%token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT TOKEN_END
 %type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST WHERE QUERY
+%type<node> QUERIES_LINKED_LIST
 %type<compareType> COMPARE
 %type<logicType> LOGIC
 
@@ -35,8 +36,18 @@
 
 %%
 
-QUERIES: | QUERIES QUERY {
-    *tree = $2;
+QUERIES: | QUERIES_LINKED_LIST {
+    *tree = $1;
+};
+
+QUERIES_LINKED_LIST:  {
+    $$ = NULL;
+} | QUERY TOKEN_END QUERIES_LINKED_LIST {
+    Node *node = createNode();
+    node->type = NTOKEN_QUERIES_LINKED_LIST;
+    node->data.QUERIES_LINKED_LIST.query = $1;
+    node->data.QUERIES_LINKED_LIST.next = $3;
+    $$ = node;
 };
 
 QUERY:
@@ -120,20 +131,20 @@ REFERENCE: TABLE TOKEN_DOT COLUMN {
     node->data.REFERENCE.column = $3;
     $$ = node;
 };
-SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE TOKEN_WHERE WHERE {
+SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE WHERE {
     Node *node = createNode();
     node->type = NTOKEN_SELECT;
     node->data.SELECT.reference = $2;
     node->data.SELECT.table = $4;
-    node->data.SELECT.where = $6;
+    node->data.SELECT.where = $5;
     $$ = node;
 };
 WHERE: {
     $$ = NULL;
-} | EXP {
+} | TOKEN_WHERE EXP {
     Node *node = createNode();
     node->type = NTOKEN_WHERE;
-    node->data.WHERE.logic = $1;
+    node->data.WHERE.logic = $2;
     $$ = node;
 };
 

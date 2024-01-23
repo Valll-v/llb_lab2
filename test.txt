@@ -3,4 +3,23 @@ SELECT
 FROM
     table
 WHERE
-    (table.column AND (3 > 3))
+    (table.column AND (3 > 3));
+
+SELECT
+    table.column, table.column1
+FROM
+    table;
+
+SELECT
+    table.column, table.column1
+FROM
+    table
+WHERE
+    (NOT(table.column) AND (3 > 3));
+
+SELECT
+    table.column, table.column1
+FROM
+    table
+WHERE
+    (NOT(table.column) AND (3 > 3));
