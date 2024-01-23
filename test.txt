@@ -1,0 +1,6 @@
+SELECT
+    table.column, table.column1
+FROM
+    table
+WHERE
+    (table.column AND (3 > 3))

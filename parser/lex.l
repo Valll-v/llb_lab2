@@ -30,6 +30,7 @@
 
 "SELECT"            { return TOKEN_SELECT; }
 "FROM"              { return TOKEN_FROM; }
+"WHERE"             { return TOKEN_WHERE; }
 
 "OR"                { yylval.logicType = 0; return TOKEN_OR; }
 "AND"               { yylval.logicType = 1; return TOKEN_AND; }

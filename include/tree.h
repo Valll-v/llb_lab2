@@ -14,7 +14,8 @@ enum nodeType {
     NTOKEN_COLUMN,
     NTOKEN_REFERENCE,
     NTOKEN_SELECT,
-    NTOKEN_REFERENCE_LINKED_LIST
+    NTOKEN_REFERENCE_LINKED_LIST,
+    NTOKEN_WHERE,
 };  /* Типы значений */
 
 enum compareType {
@@ -80,7 +81,11 @@ struct Node {
         struct {
             struct Node *reference;
             struct Node *table;
+            struct Node *where;
         } SELECT;
+        struct {
+            struct Node *logic;
+        } WHERE;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 

@@ -94,6 +94,8 @@ void printTree(Node *tree, int indentCount) {
             printTree(tree->data.SELECT.reference, indentCount + 1);
             printf("FROM\n");
             printTree(tree->data.SELECT.table, indentCount + 1);
+            printf("WHERE\n");
+            printTree(tree->data.SELECT.where->data.WHERE.logic, indentCount + 1);
             break;
     }
 }

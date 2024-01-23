@@ -22,11 +22,12 @@
 %token<boolValue> TOKEN_BOOL
 %token<stringValue> TOKEN_STRING TOKEN_NAME
 
-%token TOKEN_OPEN TOKEN_CLOSE TOKEN_SELECT TOKEN_FROM TOKEN_DOT TOKEN_COMMA
+%token TOKEN_OPEN TOKEN_CLOSE TOKEN_DOT TOKEN_COMMA
+%token TOKEN_SELECT TOKEN_FROM TOKEN_WHERE
 
 %token<compareType> TOKEN_LEQ TOKEN_GEQ TOKEN_LESS TOKEN_GREATER TOKEN_EQ TOKEN_NEQ
 %token<logicType> TOKEN_OR TOKEN_AND TOKEN_NOT
-%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST
+%type<node> EXP VALUE COMPARE_EXP LOGIC_EXP SELECT_EXP REFERENCE TABLE COLUMN REFERENCE_LINKED_LIST WHERE
 %type<compareType> COMPARE
 %type<logicType> LOGIC
 
@@ -42,7 +43,8 @@ EXP:
     VALUE |
     COMPARE_EXP |
     LOGIC_EXP |
-    SELECT_EXP
+    SELECT_EXP |
+    REFERENCE
 
 COMPARE:
     TOKEN_LEQ |
@@ -115,22 +117,31 @@ REFERENCE: TABLE TOKEN_DOT COLUMN {
     node->data.REFERENCE.column = $3;
     $$ = node;
 };
-SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE {
+SELECT_EXP: TOKEN_SELECT REFERENCE_LINKED_LIST TOKEN_FROM TABLE TOKEN_WHERE WHERE {
     Node *node = createNode();
     node->type = NTOKEN_SELECT;
     node->data.SELECT.reference = $2;
     node->data.SELECT.table = $4;
+    node->data.SELECT.where = $6;
+    $$ = node;
+};
+WHERE: {
+    $$ = NULL;
+} | EXP {
+    Node *node = createNode();
+    node->type = NTOKEN_WHERE;
+    node->data.WHERE.logic = $1;
     $$ = node;
 };
 
 LOGIC_EXP: TOKEN_OPEN LOGIC_EXP TOKEN_CLOSE {
     $$ = $2;
 } |
-TOKEN_NOT EXP {
+TOKEN_NOT TOKEN_OPEN EXP TOKEN_CLOSE {
     Node *node = createNode();
     node->type = NTOKEN_LOGIC;
     node->data.LOGIC.type = $1;
-    node->data.LOGIC.left = $2;
+    node->data.LOGIC.left = $3;
     node->data.LOGIC.right = NULL;
     $$ = node;
 } |
