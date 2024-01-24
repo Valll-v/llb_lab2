@@ -193,6 +193,10 @@ void printTree(Node *tree, int indentCount) {
             printTree(tree->data.INSERT.table, indentCount + 1);
             printTree(tree->data.INSERT.values_list, indentCount + 1);
             break;
+        case NTOKEN_DROP:
+            printf("DROP_TABLE:\n");
+            printTree(tree->data.DROP.table, indentCount + 1);
+            break;
     }
 }
 

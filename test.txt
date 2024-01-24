@@ -1,21 +1,3 @@
-SELECT
-    "table"."column", "table"."column1"
-FROM
-    "table";
-
-SELECT
-    "table"."column", "table"."column1"
-FROM
-    "table"
-WHERE
-    (NOT("table"."column") AND "table"."column" == 'aboba');
-
-UPDATE
-    "table"
-SET "aboba" = 1, "aboba" = 2
-WHERE
-    (NOT("table"."column") AND "table"."column" == 'aboba');
-
 CREATE TABLE "fight_record"
 (
     "id" INTEGER,
@@ -24,8 +6,20 @@ CREATE TABLE "fight_record"
     "info" STRING
 );
 
-DELETE FROM "fight_record"
-WHERE (NOT("table"."column") AND "table"."column" == 'aboba');
+INSERT INTO "fight_record"
+VALUES (1, 3, 5, 'megafight');
 
-INSERT INTO "table_name"
-VALUES ('value1', 2, 3);
+UPDATE "fight_record"
+SET "info" = 'finished fight', "info" = 'finished fight'
+WHERE
+"fight_record"."id" == 1;
+
+SELECT "fight_record"."id"
+FROM
+"fight_record"
+WHERE
+"fight_record"."id" == 1;
+
+DELETE FROM "fight_record";
+
+DROP TABLE "fight_record";
