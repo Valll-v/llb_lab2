@@ -155,7 +155,7 @@ void printTree(Node *tree, int indentCount) {
             printTree(tree->data.SET.value, indentCount + 1);
             break;
         case NTOKEN_CREATE:
-            printf("CREATE TABLE\n");
+            printf("CREATE_TABLE\n");
             printTree(tree->data.CREATE.table, indentCount + 1);
             printTree(tree->data.CREATE.field_list, indentCount + 1);
             break;
@@ -172,13 +172,26 @@ void printTree(Node *tree, int indentCount) {
             printTree(tree->data.FIELD.column, indentCount + 1);
             break;
         case NTOKEN_DELETE:
-            printf("DELETE FROM:\n");
+            printf("DELETE_FROM:\n");
             printTree(tree->data.DELETE.table, indentCount + 1);
             printIndent(indentCount);
             if (tree->data.DELETE.where != NULL) {
                 printf("WHERE\n");
                 printTree(tree->data.DELETE.where->data.WHERE.logic, indentCount + 1);
             }
+            break;
+        case NTOKEN_VALUES_LIST:
+            printf("VALUES:\n");
+            printTree(tree->data.VALUES_LIST.value, indentCount + 1);
+            while (tree->data.VALUES_LIST.next != NULL) {
+                tree = tree->data.VALUES_LIST.next;
+            printTree(tree->data.VALUES_LIST.value, indentCount + 1);
+            }
+            break;
+        case NTOKEN_INSERT:
+            printf("INSERT_INTO:\n");
+            printTree(tree->data.INSERT.table, indentCount + 1);
+            printTree(tree->data.INSERT.values_list, indentCount + 1);
             break;
     }
 }

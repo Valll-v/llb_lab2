@@ -26,3 +26,6 @@ CREATE TABLE "fight_record"
 
 DELETE FROM "fight_record"
 WHERE (NOT("table"."column") AND "table"."column" == 'aboba');
+
+INSERT INTO "table_name"
+VALUES ('value1', 2, 3);

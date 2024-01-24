@@ -45,6 +45,7 @@
 
 "INSERT"            { return TOKEN_INSERT; }
 "INTO"              { return TOKEN_INTO; }
+"VALUES"            { return TOKEN_VALUES; }
 
 "UPDATE"            { return TOKEN_UPDATE; }
 "SET"               { return TOKEN_SET; }

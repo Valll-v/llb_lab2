@@ -23,7 +23,9 @@ enum nodeType {
     NTOKEN_CREATE,
     NTOKEN_FIELD_LIST,
     NTOKEN_FIELD,
-    NTOKEN_DELETE
+    NTOKEN_DELETE,
+    NTOKEN_INSERT,
+    NTOKEN_VALUES_LIST
 };  /* Типы значений */
 
 enum compareType {
@@ -145,6 +147,15 @@ struct Node {
             struct Node *table;
             struct Node *field_list;
         } CREATE;
+
+        struct {
+            struct Node *value;
+            struct Node *next;
+        } VALUES_LIST;
+        struct {
+            struct Node *table;
+            struct Node *values_list;
+        } INSERT;
     } data;
 };  /* Будем преобразовывать наш код в AST */
 
