@@ -6,8 +6,8 @@ BUILDDIR = ./build
 SRCDIR = ./src
 PRSDIR = ./parser
 INCDIR = ./include
-FLEXFILES = $(patsubst $(PRSDIR)/%.l, $(SRCDIR)/%.c, $(wildcard $(PRSDIR)/*.l))
-BISONFILES = $(patsubst $(PRSDIR)/%.y, $(SRCDIR)/%.c, $(wildcard $(PRSDIR)/*.y))
+FLEXFILES = $(patsubst $(PRSDIR)/%.l, $(SRCDIR)/%.gen.c, $(wildcard $(PRSDIR)/*.l))
+BISONFILES = $(patsubst $(PRSDIR)/%.y, $(SRCDIR)/%.gen.c, $(wildcard $(PRSDIR)/*.y))
 OBJECTS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(wildcard $(SRCDIR)/*.c))
 
 MAIN_OBJ = main
@@ -20,10 +20,10 @@ BISON = bison -o $@ --header=$(INCDIR)/$(basename $(notdir $@)).h $<
 FLEX = flex -o $@ -i $<
 LINK=$(CC) -o $@
 
-$(SRCDIR)/%.c $(SRCDIR)/%.h: $(PRSDIR)/%.y
+$(SRCDIR)/%.gen.c $(SRCDIR)/%.gen.h: $(PRSDIR)/%.y
 	$(BISON)
 
-$(SRCDIR)/%.c: $(PRSDIR)/%.l
+$(SRCDIR)/%.gen.c: $(PRSDIR)/%.l
 	$(FLEX)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
